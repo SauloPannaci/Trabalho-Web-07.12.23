@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerenciador de Contatos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+
+    button {
+      margin-top: 10px;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Gerenciador de Contatos</h1>
+
+  <label for="nome">Nome:</label>
+  <input type="text" id="nome">
+
+  <label for="email">E-mail:</label>
+  <input type="email" id="email">
+
+  <label for="telefone">Telefone:</label>
+  <input type="tel" id="telefone">
+
+  <label for="cidade">Cidade:</label>
+  <input type="text" id="cidade">
+
+  <label for="estado">Estado:</label>
+  <input type="text" id="estado">
+
+  <button onclick="inserirContato()">Inserir Contato</button>
+
+  <h2>Lista de Contatos</h2>
+  <ul id="listaContatos"></ul>
+
+  <button onclick="limpar()">Limpar</button>
+
+  <script>
+    
+    function inserirContato() {
+      
+      var nome = document.getElementById('nome').value;
+      var email = document.getElementById('email').value;
+      var telefone = document.getElementById('telefone').value;
+      var cidade = document.getElementById('cidade').value;
+      var estado = document.getElementById('estado').value;
+
+      
+      if (nome && email && telefone && cidade && estado) {
+
+        var contato = {
+          Nome: nome,
+          Email: email,
+          Telefone: telefone,
+          Cidade: cidade,
+          Estado: estado
+        };
+
+        
+        var listaContatos = JSON.parse(localStorage.getItem('contatos')) || [];
+
+        
+        listaContatos.push(contato);
+
+        
+        localStorage.setItem('contatos', JSON.stringify(listaContatos));
+
+    
+        document.getElementById('nome').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('telefone').value = '';
+        document.getElementById('cidade').value = '';
+        document.getElementById('estado').value = '';
+
+        
+        listarContatos();
+      } else {
+        alert('Por favor, preencha todos os campos.');
+      }
+    }
+
+    
+    function listarContatos() {
+      
+      var listaContatos = JSON.parse(localStorage.getItem('contatos')) || [];
+
+      
+      var listaContatosElement = document.getElementById('listaContatos');
+
+      
+      listaContatosElement.innerHTML = '';
+
+      
+      listaContatos.forEach(function (contato, index) {
+        var itemLista = document.createElement('li');
+        itemLista.textContent = `Nome: ${contato.Nome}, Email: ${contato.Email}, Telefone: ${contato.Telefone}, Cidade: ${contato.Cidade}, Estado: ${contato.Estado}`;
+        itemLista.setAttribute('data-index', index); 
+        itemLista.addEventListener('click', excluirContato);
+        listaContatosElement.appendChild(itemLista);
+      });
+    }
+
+    
+    function excluirContato(event) {
+      var index = event.currentTarget.getAttribute('data-index');
+      var listaContatos = JSON.parse(localStorage.getItem('contatos')) || [];
+      
+      
+      listaContatos.splice(index, 1);
+
+      
+      localStorage.setItem('contatos', JSON.stringify(listaContatos));
+
+      
+      listarContatos();
+    }
+
+    
+    function limparLocalStorage() {
+      localStorage.removeItem('contatos');
+    
+      document.getElementById('listaContatos').innerHTML = '';
+    }
+
+    listarContatos();
+  </script>
+</body>
+</html>
